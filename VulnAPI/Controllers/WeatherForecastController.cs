@@ -1,3 +1,4 @@
+using DotNet.RateLimiter.ActionFilters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace VulnAPI.Controllers
@@ -19,6 +20,7 @@ namespace VulnAPI.Controllers
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
+        [RateLimit(PeriodInSec = 60, Limit = 60)]
         public IEnumerable<WeatherForecast> Get()
         {
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
