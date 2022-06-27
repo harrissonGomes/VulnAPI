@@ -43,14 +43,14 @@ namespace VulnAPI.Controllers
                     issuer: "Emissor",
                     audience: "Parceiro",
                     claims: Claims,
-                    expires: DateTime.Now.AddHours(2),
+                    expires: DateTime.Now.AddSeconds(30),
+                    //expires: DateTime.Now.AddHours(2),
                     signingCredentials: Creds
                 );
 
                 apiKeyResponse.Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
 
-                //var encryptToken = String.Empty;
-                //encryptToken = Encrypt(token);
+                //apiKeyResponse.Token = encryptToken = Encrypt(token);
 
                 apiKeyResponse.Success = true;
             }
@@ -93,6 +93,7 @@ namespace VulnAPI.Controllers
                     ValidIssuer = "Emissor",
                     ValidAudience = "Parceiro",
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecurityKey))
+                    //,RequireExpirationTime = true
                 };
 
                 SecurityToken validatedToken;
