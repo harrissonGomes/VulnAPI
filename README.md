@@ -1,6 +1,11 @@
 # VulnAPI
 
-<Aqui vou colocar como realizar o build/deploy >
+Para execução em Docker
+Criar imagem:
+docker build --pull --rm --no-cache -f "VulnAPI/Dockerfile" -t vulnapi:latest "."
+
+Executar imagem:
+docker run -p 6789:80 vulnapi:latest
 
 <Aqui vou colocar como explorar >
 
