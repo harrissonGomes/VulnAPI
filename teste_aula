@@ -1,0 +1,55 @@
+drop table "DB_TESTE";
+CREATE TABLE "DB_TESTE" 
+   (	
+    "INSTID" NUMBER(*,0) NOT NULL ENABLE, 
+	"TRANID" NUMBER(18,0) NOT NULL ENABLE, 
+	CONSTRAINT "PK_DB_TESTE" PRIMARY KEY ("INSTID", "TRANID")
+    USING INDEX (CREATE UNIQUE INDEX "PK_DB_TESTE" ON "DB_TESTE" ("INSTID", "TRANID")
+  )
+  )
+  PARTITION BY RANGE ("TRANID") INTERVAL (00009999000000000) 
+ (PARTITION "PART_INIT" VALUES LESS THAN (09999999999999) SEGMENT CREATION DEFERRED 
+  )
+  ;
+  
+  
+DECLARE
+   v_start_date DATE;
+   v_end_date DATE;
+   v_size_months number;
+   v_size_insert number;
+   v_tranid number;
+   v_RQSTRCVDTM timestamp;
+   v_MRCHTRCKID varchar2(36);
+   v_tranlog tranlog%ROWTYPE;
+BEGIN
+    EXECUTE IMMEDIATE 'alter session set nls_date_format="dd/mm/yyyy hh24:mi:ss"';
+    EXECUTE IMMEDIATE 'alter session set NLS_TIMESTAMP_FORMAT="dd/mm/yyyy hh24:mi:ss,FF3"';
+    -- Aqui Defini dia inicio
+    v_start_date := to_date('04/03/2023');
+    -- Aqui Defini quantidade de dias
+    v_size_months := 1;
+    -- Aqui defini a quantidade de execucao
+    v_size_insert := 1000;
+
+    FOR cur_r in 1..v_size_months LOOP
+        v_end_date := add_months(v_start_date, cur_r);
+
+        FOR M IN 1..V_SIZE_INSERT LOOP
+
+            select to_char(v_end_date, 'YDDD') || '9' || lpad(round(dbms_random.value(1,99999)), 5,0) || to_char(CURRENT_TIMESTAMP, 'MIHH24DD') || lpad(round(dbms_random.value(1,9)), 1,0) || round(dbms_random.value(1,8)) into v_tranid from dual;
+
+            BEGIN
+                 insert into DB_TESTE 
+                   (INSTID,TRANID)
+                   values
+                   (0, v_tranid);
+                commit;
+			EXCEPTION WHEN OTHERS THEN
+				DBMS_OUTPUT.PUT_LINE('ERRO : ' || SQLERRM);
+				CONTINUE;
+			END;
+        END LOOP;
+        commit;
+    END LOOP;
+END;
